@@ -2826,34 +2826,14 @@ public class PhotoModule extends BaseModule<PhotoUI> implements
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // Do not handle any key if the activity is
-        // not in active camera/video mode
-        if (!mActivity.isInCameraApp()) {
+        /*TODO: if (!mActivity.mShowCameraAppView) {
             return false;
-        }
+        }*/
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_MEDIA_NEXT:
-                if (mFirstTimeInitialized && (mUI.mMenuInitialized)) {
-                    if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
-                        onShutterButtonFocus(true);
-                    } else {
-                        mUI.onScaleStepResize(true);
-                    }
-                }
-                return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                if (mFirstTimeInitialized && (mUI.mMenuInitialized)) {
-                    if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
-                        onShutterButtonFocus(true);
-                    } else {
-                        mUI.onScaleStepResize(false);
-                    }
-                }
-                return true;
             case KeyEvent.KEYCODE_FOCUS:
-                if (mFirstTimeInitialized) {
+                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
                     if (event.getRepeatCount() == 0) {
                         onShutterButtonFocus(true);
                     }
@@ -2861,7 +2841,6 @@ public class PhotoModule extends BaseModule<PhotoUI> implements
                 }
                 return false;
             case KeyEvent.KEYCODE_CAMERA:
-            case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
                     onShutterButtonClick();
                 }
@@ -2879,7 +2858,7 @@ public class PhotoModule extends BaseModule<PhotoUI> implements
                 return true;
             case KeyEvent.KEYCODE_POWER:
                 if (mFirstTimeInitialized && event.getRepeatCount() == 0
-                        && CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
+                        && CameraActivity.mPowerShutter) {
                     onShutterButtonFocus(true);
                 }
                 return true;
@@ -2889,16 +2868,15 @@ public class PhotoModule extends BaseModule<PhotoUI> implements
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        /*TODO: if (!mActivity.mShowCameraAppView) {
+            return false;
+        }*/
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_MEDIA_NEXT:
-            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()
-                        && mFirstTimeInitialized) {
+                if (/*mActivity.isInCameraApp() && */ mFirstTimeInitialized) {
                     onShutterButtonClick();
                     return true;
-
                 }
                 return false;
             case KeyEvent.KEYCODE_FOCUS:
@@ -2907,8 +2885,7 @@ public class PhotoModule extends BaseModule<PhotoUI> implements
                 }
                 return true;
             case KeyEvent.KEYCODE_POWER:
-                if (CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()
-                        && mFirstTimeInitialized) {
+                if (CameraActivity.mPowerShutter && mFirstTimeInitialized) {
                     onShutterButtonClick();
                 }
                 return true;

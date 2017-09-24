@@ -223,7 +223,6 @@ public class CameraActivity extends Activity
     private final Object mStorageSpaceLock = new Object();
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mSecureCamera;
-    private boolean mInCameraApp = true;
     // Keep track of powershutter state
     public static boolean mPowerShutter = false;
     // Keep track of max brightness state
@@ -1969,10 +1968,8 @@ public class CameraActivity extends Activity
     protected void initPowerShutter(ComboPreferences prefs) {
         String val = prefs.getString(CameraSettings.KEY_POWER_SHUTTER,
                 getResources().getString(R.string.pref_camera_power_shutter_default));
-        if (!CameraUtil.hasCameraKey()) {
-            mPowerShutter = val.equals(CameraSettings.VALUE_ON);
-        }
-        if (mPowerShutter && mInCameraApp) {
+        mPowerShutter = val.equals(CameraSettings.VALUE_ON);
+        if (mPowerShutter /*TODO: && mShowCameraAppView*/) {
             getWindow().addPrivateFlags(
                     WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY);
         } else {
@@ -1990,7 +1987,7 @@ public class CameraActivity extends Activity
 
         mMaxBrightness = val.equals(CameraSettings.VALUE_ON);
 
-        if (mMaxBrightness && mInCameraApp) {
+        if (mMaxBrightness) {
             params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
         } else {
             params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
@@ -2055,10 +2052,6 @@ public class CameraActivity extends Activity
 
     public boolean isForceReleaseCamera() {
         return mForceReleaseCamera;
-    }
-
-    public boolean isInCameraApp() {
-        return arePreviewControlsVisible();
     }
 
     @Override
@@ -2404,7 +2397,6 @@ public class CameraActivity extends Activity
      */
     private void setPreviewControlsVisibility(boolean visible) {
         mCurrentModule.onPreviewFocusChanged(visible);
-        mInCameraApp = visible;
     }
 
     // Accessor methods for getting latency times used in performance testing
